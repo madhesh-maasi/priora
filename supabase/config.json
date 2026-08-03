@@ -1,0 +1,20 @@
+{
+  "project_id": "your-supabase-project-id",
+  "api": {
+    "port": 54321,
+    "schemas": ["public", "auth", "graphql_public"],
+    "max_rows": 1000
+  },
+  "db": {
+    "port": 54322,
+    "major_version": 15
+  },
+  "realtime": {
+    "enabled": true,
+    "max_bytes_per_second": 1048576
+  },
+  "edge_runtime": {
+    "enabled": true,
+    "policy_mode": "per_request"
+  }
+}
