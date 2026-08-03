@@ -1,25 +1,45 @@
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { EmptyState } from '@/components/feedback/EmptyState';
-import { colors, spacing, typography } from '@/theme';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { useTasks, useTaskMutations, TaskList } from '@/features/tasks';
+import { QuickAddTask } from '@/features/tasks/components/QuickAddTask';
+import { colors, spacing } from '@/theme';
 
-export const AllTasksScreen: React.FC = () => (
-  <View style={styles.container}>
-    <View style={styles.header}>
-      <Text style={styles.title}>All Tasks</Text>
+export const AllTasksScreen: React.FC = () => {
+  const { data: tasks, isLoading } = useTasks();
+  const { createTask, completeTask, deleteTask } = useTaskMutations();
+
+  const handleAddTask = async (title: string) => {
+    await createTask.mutateAsync({
+      title,
+      priority: 'MEDIUM',
+    });
+  };
+
+  const handleCompleteTask = async (taskId: string) => {
+    await completeTask.mutateAsync(taskId);
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    await deleteTask.mutateAsync(taskId);
+  };
+
+  return (
+    <View style={styles.container}>
+      <QuickAddTask onAdd={handleAddTask} isLoading={createTask.isPending} />
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <TaskList
+          tasks={tasks || []}
+          isLoading={isLoading}
+          onTaskComplete={handleCompleteTask}
+          onTaskDelete={handleDeleteTask}
+          showActions={true}
+        />
+      </ScrollView>
     </View>
-    <EmptyState
-      icon="✅"
-      title="No tasks"
-      description="Create your first task to get started."
-      actionLabel="Add Task"
-      onAction={() => {}}
-    />
-  </View>
-);
+  );
+};
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg.primary },
-  header: { padding: spacing[4], backgroundColor: colors.primary[50] },
-  title: { ...typography.styles.h2, color: colors.text.primary },
+  content: { flex: 1, paddingVertical: spacing[3] },
 });
