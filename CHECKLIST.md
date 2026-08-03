@@ -1,7 +1,7 @@
 # Priora — Project Completion Checklist
 
 **Version:** 1.0.0 · **Last Updated:** 2026-08-04  
-**Overall Progress:** 179/297 tasks (60%) · Phase 0-5 Complete · Authentication ✅ · Phase 6 Next
+**Overall Progress:** 190/297 tasks (64%) · Phase 0-6 Complete · Dashboard ✅ · Phase 7 Next
 
 **Stack:** React Native CLI (bare) + TypeScript (iOS, Android, Web support)  
 **Benefits:** Full control, zero managed costs, cross-platform from one codebase
@@ -247,19 +247,20 @@
 
 ---
 
-## Phase 6 — Dashboard Feature
+## Phase 6 — Dashboard Feature ✅ COMPLETE
 
 ### 6.1 Domain Layer
-- [ ] Create dashboard types and schemas
+- [x] Create dashboard types and schemas
 
 ### 6.2 Application Layer
-- [ ] Create `useDashboardMetrics()` hook
-- [ ] Create `useRecentTasks()` hook
-- [ ] Create `useStreak()` hook
+- [x] Create `useDashboardMetrics()` hook
+- [x] Create `useRecentTasks()` hook
+- [x] Create `useUpcomingTasks()` hook
+- [x] Create `useOverdueTasks()` hook
 
 ### 6.3 Presentation Layer
-- [ ] Build dashboard components
-- [ ] Assemble `DashboardScreen.tsx`
+- [x] Build dashboard components (StatCard, StreakCard, TaskCard, SectionHeader)
+- [x] Assemble `DashboardScreen.tsx` with real data
 
 ---
 
@@ -470,10 +471,11 @@
 | Phase 3 | 40 | 32 | 0 | 8 |
 | Phase 4 | 21 | 21 | 0 | 0 |
 | Phase 5 | 16 | 16 | 0 | 0 |
-| Phase 6-19 | 134 | 0 | 0 | 134 |
-| **TOTAL** | **297** | **179** | **0** | **118** |
+| Phase 6 | 11 | 11 | 0 | 0 |
+| Phase 7-19 | 123 | 0 | 0 | 123 |
+| **TOTAL** | **297** | **190** | **0** | **107** |
 
 ---
 
 **Last Updated:** 2026-08-04  
-**Next Step:** Phase 6 — Dashboard Feature
+**Next Step:** Phase 7 — Task Engine Feature
