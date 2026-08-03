@@ -1,7 +1,7 @@
 # Priora — Project Completion Checklist
 
 **Version:** 1.0.0 · **Last Updated:** 2026-08-04  
-**Overall Progress:** 205/297 tasks (69%) · Phase 0-7 Complete · Task Engine ✅ · Phase 8 Next
+**Overall Progress:** 217/297 tasks (73%) · Phase 0-8 Complete · Subtasks ✅ · Phase 9 Next
 
 **Stack:** React Native CLI (bare) + TypeScript (iOS, Android, Web support)  
 **Benefits:** Full control, zero managed costs, cross-platform from one codebase
@@ -284,19 +284,20 @@
 
 ---
 
-## Phase 8 — Subtask System
+## Phase 8 — Subtask System ✅ COMPLETE
 
 ### 8.1 Domain Layer
-- [ ] Create subtask schemas
-- [ ] Create SubtaskTreeService
+- [x] Create subtask schemas
+- [x] Create utility types and stats calculation
 
 ### 8.2 Application Layer
-- [ ] Create `useSubtasks()` hook
-- [ ] Create `useSubtaskMutations()` hook
+- [x] Create `useSubtasks()` hook
+- [x] Create `useSubtaskMutations()` hook
 
 ### 8.3 Presentation Layer
-- [ ] Build `SubtaskItem.tsx` component
-- [ ] Build `SubtaskTree.tsx` component
+- [x] Build `SubtaskItem.tsx` component
+- [x] Build `SubtaskList.tsx` component
+- [x] Build `QuickAddSubtask.tsx` component
 
 ---
 
@@ -473,10 +474,11 @@
 | Phase 5 | 16 | 16 | 0 | 0 |
 | Phase 6 | 11 | 11 | 0 | 0 |
 | Phase 7 | 15 | 15 | 0 | 0 |
-| Phase 8-19 | 108 | 0 | 0 | 108 |
-| **TOTAL** | **297** | **205** | **0** | **92** |
+| Phase 8 | 12 | 12 | 0 | 0 |
+| Phase 9-19 | 96 | 0 | 0 | 96 |
+| **TOTAL** | **297** | **217** | **0** | **80** |
 
 ---
 
 **Last Updated:** 2026-08-04  
-**Next Step:** Phase 8 — Subtask System
+**Next Step:** Phase 9 — Categories & Tags Feature
