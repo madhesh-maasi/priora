@@ -75,7 +75,9 @@ export const queryKeys = {
   dashboard: {
     all: [...queryKeys.all, 'dashboard'] as const,
     metrics: () => [...queryKeys.dashboard.all, 'metrics'] as const,
-    recentTasks: () => [...queryKeys.dashboard.all, 'recentTasks'] as const,
+    recentTasks: (limit?: number) => [...queryKeys.dashboard.all, 'recentTasks', limit || 5] as const,
+    upcomingTasks: (days?: number) => [...queryKeys.dashboard.all, 'upcomingTasks', days || 7] as const,
+    overdueTasks: () => [...queryKeys.dashboard.all, 'overdueTasks'] as const,
     streak: () => [...queryKeys.dashboard.all, 'streak'] as const,
   },
 };
