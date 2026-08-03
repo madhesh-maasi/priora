@@ -1,22 +1,28 @@
 import { supabase } from '@/services/supabaseClient';
-import { AuthUser, SignUpCredentials, SignInCredentials } from '../types/auth.types';
+import type { AuthUser, SignUpCredentials, SignInCredentials } from '../types/auth.types';
 
-export class AuthService {
+class AuthService {
   async signUp(credentials: SignUpCredentials): Promise<AuthUser> {
-    const { data, error } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: credentials.email,
       password: credentials.password,
       options: {
-        data: {
-          display_name: credentials.displayName,
-        },
+        data: { displayName: credentials.displayName },
       },
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error('Sign up failed');
+    if (authError) throw new Error(authError.message);
+    if (!authData.user) throw new Error('Failed to create user');
 
-    return data.user as AuthUser;
+    const user: AuthUser = {
+      id: authData.user.id,
+      email: authData.user.email || credentials.email,
+      displayName: credentials.displayName,
+      createdAt: authData.user.created_at,
+      updatedAt: authData.user.updated_at,
+    };
+
+    return user;
   }
 
   async signIn(credentials: SignInCredentials): Promise<AuthUser> {
@@ -25,83 +31,120 @@ export class AuthService {
       password: credentials.password,
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error('Sign in failed');
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Failed to sign in');
 
-    return data.user as AuthUser;
+    const user: AuthUser = {
+      id: data.user.id,
+      email: data.user.email || credentials.email,
+      displayName: data.user.user_metadata?.displayName,
+      createdAt: data.user.created_at,
+      updatedAt: data.user.updated_at,
+    };
+
+    return user;
   }
 
   async signInWithGoogle(): Promise<AuthUser> {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.REACT_NATIVE_SUPABASE_URL}/auth/v1/callback`,
+        redirectTo: 'http://localhost:8081/auth/callback',
       },
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error('Google sign in failed');
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Failed to sign in with Google');
 
-    return data.user as AuthUser;
+    const user: AuthUser = {
+      id: data.user.id,
+      email: data.user.email || '',
+      displayName: data.user.user_metadata?.full_name,
+      avatar: data.user.user_metadata?.avatar_url,
+      createdAt: data.user.created_at,
+      updatedAt: data.user.updated_at,
+    };
+
+    return user;
   }
 
   async signInWithApple(): Promise<AuthUser> {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'apple',
       options: {
-        redirectTo: `${process.env.REACT_NATIVE_SUPABASE_URL}/auth/v1/callback`,
+        redirectTo: 'http://localhost:8081/auth/callback',
       },
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error('Apple sign in failed');
+    if (error) throw new Error(error.message);
+    if (!data.user) throw new Error('Failed to sign in with Apple');
 
-    return data.user as AuthUser;
+    const user: AuthUser = {
+      id: data.user.id,
+      email: data.user.email || '',
+      displayName: data.user.user_metadata?.full_name,
+      avatar: data.user.user_metadata?.avatar_url,
+      createdAt: data.user.created_at,
+      updatedAt: data.user.updated_at,
+    };
+
+    return user;
   }
 
   async signOut(): Promise<void> {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   }
 
   async resetPassword(email: string): Promise<void> {
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.REACT_NATIVE_SUPABASE_URL}/auth/reset-password`,
+      redirectTo: 'http://localhost:8081/auth/reset-password',
     });
-
-    if (error) throw error;
+    if (error) throw new Error(error.message);
   }
 
-  async confirmPasswordReset(password: string, token: string): Promise<void> {
-    const { error } = await supabase.auth.updateUser({ password });
-
-    if (error) throw error;
+  async confirmPassword(newPassword: string, token: string): Promise<void> {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    if (error) throw new Error(error.message);
   }
 
   async getCurrentUser(): Promise<AuthUser | null> {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) return null;
 
-    return (user as AuthUser) || null;
+    return {
+      id: data.user.id,
+      email: data.user.email || '',
+      displayName: data.user.user_metadata?.displayName,
+      avatar: data.user.user_metadata?.avatar_url,
+      createdAt: data.user.created_at,
+      updatedAt: data.user.updated_at,
+    };
   }
 
   async getSession() {
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-
-    return session;
+    const { data } = await supabase.auth.getSession();
+    return data.session;
   }
 
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      callback((session?.user as AuthUser) || null);
+    return supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const user: AuthUser = {
+          id: session.user.id,
+          email: session.user.email || '',
+          displayName: session.user.user_metadata?.displayName,
+          avatar: session.user.user_metadata?.avatar_url,
+          createdAt: session.user.created_at,
+          updatedAt: session.user.updated_at,
+        };
+        callback(user);
+      } else {
+        callback(null);
+      }
     });
-
-    return subscription;
   }
 }
 

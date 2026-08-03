@@ -1,16 +1,32 @@
-import { useEffect, useState } from 'react';
-import { Session } from '@supabase/supabase-js';
+import { useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 
-export function useSession() {
+interface Session {
+  access_token: string;
+  refresh_token?: string;
+  expires_in?: number;
+  expires_at?: number;
+  token_type: string;
+  user: { id: string; email: string } | null;
+}
+
+export const useSession = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
     const initSession = async () => {
       try {
         const currentSession = await authService.getSession();
         setSession(currentSession);
+
+        unsubscribe = authService.onAuthStateChange(() => {
+          authService.getSession().then(newSession => {
+            setSession(newSession);
+          });
+        });
       } finally {
         setIsLoading(false);
       }
@@ -18,22 +34,10 @@ export function useSession() {
 
     initSession();
 
-    const subscription = authService.onAuthStateChange((user) => {
-      if (user) {
-        const initSession = async () => {
-          const currentSession = await authService.getSession();
-          setSession(currentSession);
-        };
-        initSession();
-      } else {
-        setSession(null);
-      }
-    });
-
     return () => {
-      subscription?.unsubscribe();
+      unsubscribe?.();
     };
   }, []);
 
   return { session, isLoading };
-}
+};

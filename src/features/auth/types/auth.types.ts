@@ -1,15 +1,16 @@
-import { User } from '@supabase/supabase-js';
-
-export interface AuthUser extends User {
+export interface AuthUser {
   id: string;
   email: string;
-  user_metadata?: Record<string, unknown>;
+  displayName?: string;
+  avatar?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SignUpCredentials {
+  displayName: string;
   email: string;
   password: string;
-  displayName?: string;
 }
 
 export interface SignInCredentials {
@@ -28,6 +29,7 @@ export interface PasswordResetConfirm {
 
 export interface AuthState {
   user: AuthUser | null;
+  session: any | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
@@ -40,6 +42,6 @@ export interface AuthContextType extends AuthState {
   signInWithApple: () => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  confirmPasswordReset: (password: string, token: string) => Promise<void>;
+  confirmPassword: (password: string, token: string) => Promise<void>;
   clearError: () => void;
 }
